@@ -60,8 +60,26 @@ def send_email(sender, gmail_password, recipients,  subject, text, attachments, 
     except:
         print("Unable to send the email. Error: ", sys.exc_info()[0])
         raise
+        
+#checking whether folders are exist, and if not - creating
+import os, errno
+dir_to_be_sent ="to_be_sent"
+dir_sent = "sent"
 
-
+#TO BE SENT
+try:
+    os.makedirs(dir_to_be_sent)
+except OSError as e:
+    if e.errno != errno.EEXIST:
+        raise
+#SENT
+try:
+    os.makedirs(dir_sent)
+except OSError as e:
+    if e.errno != errno.EEXIST:
+        raise
+        
+        
 sender = 'evgps2@gmail.com'
 gmail_password = ''
 recipient = ['evgps@ya.ru']#'vetsler@gmail.com']
@@ -69,11 +87,11 @@ subject = u'Тест спама'
 text = u'Тест спама по закидыванию порно в папку'
 # files = ['attach.jpg']
 while(1):
-    for root, dirs, files in os.walk('to_be_sent/'):
+    for root, dirs, files in os.walk(dir_to_be_sent):
         if files  == []:
             time.sleep(5)
         else:
-            send_email(sender, gmail_password, recipient,  subject, text, files, 'to_be_sent/')
+            send_email(sender, gmail_password, recipient,  subject, text, files, dir_to_be_sent)
             for file in files:
-                os.rename('to_be_sent/'+file, 'sent/'+file)
+                os.rename(dir_to_be_sent+file, dir_sent+file)
 
